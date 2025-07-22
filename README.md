@@ -1,69 +1,40 @@
-# React + TypeScript + Vite
+# elixir-wasm-demo
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is a basic demonstration of running Elixir in AtomVM via Popcorn. More info will be added soon,
+but the simplest way to test this is:
 
-Currently, two official plugins are available:
+```bash
+# Install npm deps:
+npm install
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+# Build the library, requires a working Docker installation:
+npm run build:lib
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Run the project:
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Then, navigate to `http://localhost:5173`, you will see the demo page (default Vite/React page). Check the console for logs (enable `Verbose` to see debug traces).
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+What this demo is actually doing (for now), is sending a small bit of code to an Elixir app running in the VM. It is sent:
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```elixir
+case Enum.max([1, 2, 3]) do
+    3 -> {:ok, 3}
+    2 -> {:error, 2}
+end
 ```
+
+Then, the Elixir app returns the result (in this case `3`):
+
+```json
+{
+  "data": "{:ok, 3}",
+  "durationMs": 29.41000000014901
+}
+```
+
+## TODO
+
+- Add more interesting Elixir code to execute!
+- Figure out how the `IFrame` injection can be packaged and simplified for users of our toolkit and hooks (this is the tricky part)
