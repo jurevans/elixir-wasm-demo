@@ -24,6 +24,8 @@ export const usePopcorn = () => {
   useEffect(() => {
     if (window.Popcorn && callRef.current === false) {
       callRef.current = true;
+      // It's important to not allow React to call this twice,
+      // as it injects an iFrame!
       setup();
     }
   }, []);
