@@ -23,4 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 build
-src/assets/wasm
+public/wasm
+src/lib/popcorn.js
+

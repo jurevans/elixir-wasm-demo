@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import "./App.css";
-import { init } from "./utils";
-import type { Popcorn } from "./assets/wasm/popcorn";
+import { type Popcorn } from "./types/Popcorn";
+import { usePopcorn } from "./hooks/usePopcorn";
 
 const EVAL_ELIXIR = "eval_elixir";
 const EVAL_CODE = `case Enum.max([1, 2, 3]) do
@@ -25,25 +25,29 @@ async function sendEvalRequest(popcorn: Popcorn, code: string) {
     });
     console.log("RESULTS!", { data, durationMs });
   } catch (e) {
-    console.error(e);
+    console.error("FAILED TO CALL", e);
   }
 }
 
 function App() {
   const [count, setCount] = useState(0);
+  const { popcorn, error } = usePopcorn();
 
   useEffect(() => {
-    init().then((popcorn) => {
+    if (popcorn) {
       console.log("POPCORN->", popcorn);
       if (popcorn) {
-        sendEvalRequest(popcorn, EVAL_CODE);
+        sendEvalRequest(popcorn, EVAL_CODE).then((v) =>
+          console.warn("sendEvalRequest() -> ", v),
+        );
       }
-    });
-  }, []);
+    }
+  }, [popcorn]);
 
   return (
     <>
       <div>
+        {error && <p>{error}</p>}
         <a href="https://vite.dev" target="_blank">
           <img src={viteLogo} className="logo" alt="Vite logo" />
         </a>

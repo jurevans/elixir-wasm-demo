@@ -1,18 +1,24 @@
-import { Popcorn } from "./assets/wasm/popcorn";
+import { type Popcorn as IPopcorn } from "./types/Popcorn";
+declare global {
+  interface Window {
+    Popcorn: IPopcorn;
+  }
+}
 
 let isInitializedCalled: boolean = false;
-let popcorn: Popcorn | undefined = undefined;
+let popcornPromise: Promise<IPopcorn> | undefined = undefined;
 
-export const init = async (): Promise<Popcorn | undefined> => {
-  if (!isInitializedCalled && !popcorn) {
+export const init = async (): Promise<IPopcorn | undefined> => {
+  if (!isInitializedCalled && !popcornPromise) {
     isInitializedCalled = true;
-    popcorn = await Popcorn.init({
+    console.log("POPCORN?", window.Popcorn);
+    popcornPromise = window.Popcorn.init({
       debug: true,
-      bundlePath: "./wasm/bundle.avm",
+      bundlePath: "wasm/bundle.avm",
       // container: document.body,
-      onStdout: (text: string) => console.info(text),
-      onStderr: (text: string) => console.error(text),
+      onStdout: (text: string) => console.warn(`INFO: ${text}`),
+      onStderr: (text: string) => console.warn(`ERROR: ${text}`),
     });
-    return popcorn;
+    return popcornPromise;
   }
 };

@@ -93,10 +93,10 @@ EOF
 RUN just 
 
 FROM scratch
-COPY --from=build /build/lib/eval_in_wasm/static/wasm/AtomVM.mjs /src/assets/wasm/
-COPY --from=build /build/lib/eval_in_wasm/static/wasm/AtomVM.wasm /src/assets/wasm/
-COPY --from=build /build/lib/eval_in_wasm/static/wasm/bundle.avm /src/assets/wasm/
-COPY --from=build /build/lib/eval_in_wasm/static/wasm/popcorn.js /src/assets/wasm/
-COPY --from=build /build/lib/eval_in_wasm/static/wasm/popcorn_iframe.js /src/assets/wasm/
+COPY --from=build /build/lib/eval_in_wasm/static/wasm/AtomVM.mjs /public/wasm/
+COPY --from=build /build/lib/eval_in_wasm/static/wasm/AtomVM.wasm /public/wasm/
+COPY --from=build /build/lib/eval_in_wasm/static/wasm/bundle.avm /public/wasm/
+COPY --from=build /build/lib/eval_in_wasm/static/wasm/popcorn.js /public/wasm/
+COPY --from=build /build/lib/eval_in_wasm/static/wasm/popcorn_iframe.js /public/wasm/
 
 ENTRYPOINT ["/build"]
