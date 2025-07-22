@@ -35,11 +35,8 @@ function App() {
 
   useEffect(() => {
     if (popcorn) {
-      console.log("POPCORN->", popcorn);
       if (popcorn) {
-        sendEvalRequest(popcorn, EVAL_CODE).then((v) =>
-          console.warn("sendEvalRequest() -> ", v),
-        );
+        sendEvalRequest(popcorn, EVAL_CODE);
       }
     }
   }, [popcorn]);
