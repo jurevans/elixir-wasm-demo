@@ -14,9 +14,9 @@ npm run build:lib
 npm run dev
 ```
 
-Then, navigate to `http://localhost:5173`, you will see the demo page (default Vite/React page). Check the console for logs (enable `Verbose` to see debug traces).
+Then, navigate to `http://localhost:5173`, you will see the demo page form. Check the console for logs (enable `Verbose` to see debug traces).
 
-What this demo is actually doing (for now), is sending a small bit of code to an Elixir app running in the VM. It is sent:
+What this demo is actually doing (for now), is allowing you to send some code to an Elixir app running in the VM. By default, it sends:
 
 ```elixir
 case Enum.max([1, 2, 3]) do
@@ -25,7 +25,7 @@ case Enum.max([1, 2, 3]) do
 end
 ```
 
-Then, the Elixir app returns the result (in this case `3`):
+Then, the Elixir app returns the result (in this case `{:ok, 3}`):
 
 ```json
 {
