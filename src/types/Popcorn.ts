@@ -15,17 +15,24 @@ export type InitParams = {
 };
 
 export type AnySerializable = Json;
+export type VmArgs = { process: string; timeoutMs?: number };
 
 export interface Popcorn {
+  /* Stdout handler, defaults to console.log() */
   onStdout: (text: string) => void;
+  /* Stderr handler, defaults to console.warn() */
   onStderr: (text: string) => void;
+  /* Create iFrame and establish communication channels */
   init(params: InitParams): Promise<Popcorn>;
+  /* Destroy iFrame and reset the instance */
   deinit(): void;
+  /* Send a message to Elixir process expecting a result */
   call<T = AnySerializable, U = AnySerializable>(
     args: T,
-    { process, timeoutMs }: { process: string; timeoutMs: number },
+    vmArg: VmArgs,
   ): Promise<{ data: U; durationMs: number; error?: string }>;
-  cast(args: AnySerializable, { process }: { process: string }): void;
+  /* Send a message to Elixir process */
+  cast<T = AnySerializable>(args: T, vmArgs: VmArgs): void;
 }
 
 declare global {
