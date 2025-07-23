@@ -65,7 +65,7 @@ const TextArea = ({ label, value, onChange }: TextAreaProps) => (
       id={`input-${label.toLowerCase()}`}
       value={value}
       className={[
-        "shadow appearance-none border rounded w-full h-[420px] py-2 px-3 text-gray-300 leading-tight",
+        "shadow appearance-none border rounded w-full h-[300px] py-2 px-3 text-gray-300 leading-tight",
         "focus:outline-none focus:shadow-outline",
       ].join(" ")}
       onChange={onChange}
@@ -151,12 +151,12 @@ function App() {
           onChange={(e) => setCode(e.target.value)}
         />
         {status !== Status.Pending && result && (
-          <pre className="p-4 text-orange-400 font-bold">
+          <pre className="p-4 text-orange-400 font-bold text-xs text-wrap">
             {JSON.stringify(result, null, 2)}
           </pre>
         )}
         {status === Status.Pending && (
-          <p className="p-4 text-orange-400 font-bold text-center">
+          <p className="p-4 text-green-400 font-bold text-center">
             Calling WASM...
           </p>
         )}
