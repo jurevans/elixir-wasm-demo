@@ -111,6 +111,7 @@ function App() {
         }
       })();
       const res = await sendEvalRequest(popcorn, action, code).catch((e) => {
+        setResult(undefined);
         setStatus(Status.Error);
         setErrorResult(`${e}`);
       });
@@ -118,6 +119,7 @@ function App() {
         setResult(res);
         setErrorResult(undefined);
       } else {
+        setResult(undefined);
         setErrorResult("Did not get a response");
       }
       setStatus(Status.Idle);

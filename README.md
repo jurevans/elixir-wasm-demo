@@ -34,6 +34,8 @@ Then, the Elixir app returns the result (in this case `{:ok, 3}`):
 }
 ```
 
+Alternatively, select `Erlang` or `Erlang Module`.
+
 ## TODO
 
 - Add more interesting Elixir code to execute!
