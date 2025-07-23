@@ -19,13 +19,12 @@ export type AnySerializable = Json;
 export interface Popcorn {
   onStdout: (text: string) => void;
   onStderr: (text: string) => void;
-  heartbeatTimeoutMs: number | null;
   init(params: InitParams): Promise<Popcorn>;
   deinit(): void;
-  call(
-    args: AnySerializable,
+  call<T = AnySerializable, U = AnySerializable>(
+    args: T,
     { process, timeoutMs }: { process: string; timeoutMs: number },
-  ): Promise<{ data: AnySerializable; durationMs: number }>;
+  ): Promise<{ data: U; durationMs: number; error?: string }>;
   cast(args: AnySerializable, { process }: { process: string }): void;
 }
 

@@ -6,6 +6,12 @@ import { usePopcorn } from "./hooks/usePopcorn";
 const EVAL_ELIXIR = "eval_elixir";
 const EVAL_ERLANG = "eval_erlang";
 const EVAL_ERLANG_MODULE = "eval_erlang_module";
+
+type Action =
+  | typeof EVAL_ELIXIR
+  | typeof EVAL_ERLANG
+  | typeof EVAL_ERLANG_MODULE;
+
 const EVAL_ELIXIR_DEFAULT = `case Enum.max([1, 2, 3]) do
     3 -> {:ok, 3}
     2 -> {:error, 2}
@@ -22,19 +28,25 @@ const EVAL_ERLANG_MODULE_DEFAULT = `-module(basic).
 add(A, B) -> A + B.
 `;
 
+type CallAction = [Action, Json];
+type ResponseData = Json;
+
 async function sendEvalRequest(
   popcorn: Popcorn,
-  action: string,
+  action: Action,
   code: string,
 ): Promise<{ data: Json; durationMs: number } | undefined> {
   if (code === "") {
     return;
   }
   try {
-    const result = await popcorn.call([action, code], {
-      process: "main",
-      timeoutMs: 10_000,
-    });
+    const result = await popcorn.call<CallAction, ResponseData>(
+      [action, code],
+      {
+        process: "main",
+        timeoutMs: 10_000,
+      },
+    );
     return result;
   } catch (e) {
     console.error("FAILED TO CALL", e);
