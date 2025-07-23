@@ -1,24 +1,36 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import "./App.css";
 import { type Json, type Popcorn } from "./types/Popcorn";
 import { usePopcorn } from "./hooks/usePopcorn";
 
 const EVAL_ELIXIR = "eval_elixir";
-const EVAL_CODE = `case Enum.max([1, 2, 3]) do
+const EVAL_ERLANG = "eval_erlang";
+const EVAL_ERLANG_MODULE = "eval_erlang_module";
+const EVAL_ELIXIR_DEFAULT = `case Enum.max([1, 2, 3]) do
     3 -> {:ok, 3}
     2 -> {:error, 2}
 end
 `;
+const EVAL_ERLANG_DEFAULT = `case lists:max([1,3,2]) of
+    3 -> {ok, 3};
+    2 -> {error, 2}
+end.
+`;
+const EVAL_ERLANG_MODULE_DEFAULT = `-module(basic).
+-export([add/2]).
+
+add(A, B) -> A + B.
+`;
 
 async function sendEvalRequest(
   popcorn: Popcorn,
+  action: string,
   code: string,
 ): Promise<{ data: Json; durationMs: number } | undefined> {
   if (code === "") {
     return;
   }
   try {
-    const action = EVAL_ELIXIR;
     const result = await popcorn.call([action, code], {
       process: "main",
       timeoutMs: 10_000,
@@ -61,17 +73,44 @@ const TextArea = ({ label, value, onChange }: TextAreaProps) => (
   </div>
 );
 
+type Lang = "elixir" | "erlang" | "erlang_module";
+
 function App() {
   const [result, setResult] = useState<Json>();
   const [status, setStatus] = useState(Status.Idle);
-  const [code, setCode] = useState(EVAL_CODE);
+  const [lang, setLang] = useState<Lang>("elixir");
+  const [code, setCode] = useState(EVAL_ELIXIR_DEFAULT);
   const [error, setErrorResult] = useState<string>();
   const { popcorn, error: popcornError } = usePopcorn();
+
+  useEffect(() => {
+    switch (lang) {
+      case "elixir":
+        setCode(EVAL_ELIXIR_DEFAULT);
+        break;
+      case "erlang":
+        setCode(EVAL_ERLANG_DEFAULT);
+        break;
+      case "erlang_module":
+        setCode(EVAL_ERLANG_MODULE_DEFAULT);
+        break;
+    }
+  }, [lang]);
 
   const handleSubmit = useCallback(async () => {
     if (popcorn && code) {
       setStatus(Status.Pending);
-      const res = await sendEvalRequest(popcorn, code).catch((e) => {
+      const action = (() => {
+        switch (lang) {
+          case "elixir":
+            return EVAL_ELIXIR;
+          case "erlang":
+            return EVAL_ERLANG;
+          case "erlang_module":
+            return EVAL_ERLANG_MODULE;
+        }
+      })();
+      const res = await sendEvalRequest(popcorn, action, code).catch((e) => {
         setStatus(Status.Error);
         setErrorResult(`${e}`);
       });
@@ -83,7 +122,7 @@ function App() {
       }
       setStatus(Status.Idle);
     }
-  }, [popcorn, code]);
+  }, [popcorn, code, lang]);
 
   return (
     <div className="bg-black flex items-center justify-center w-full min-h-screen">
@@ -94,8 +133,20 @@ function App() {
           </p>
         )}
 
+        <div className="pt-4 pb-4">
+          <select
+            value={lang}
+            onChange={(e) => setLang(e.target.value as Lang)}
+            className="text-gray-500"
+          >
+            <option value="elixir">Elixir</option>
+            <option value="erlang">Erlang</option>
+            <option value="erlang_module">Erlang Module</option>
+          </select>
+        </div>
+
         <TextArea
-          label="Enter some Elixir:"
+          label={`Using action = ${lang}:`}
           value={code}
           onChange={(e) => setCode(e.target.value)}
         />
