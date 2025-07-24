@@ -1,8 +1,8 @@
-export type JsonPrimative = string | number | boolean | null;
+export type JsonPrimitive = string | number | boolean | null;
 export type JsonArray = Json[];
 export type JsonObject = { [key: string]: Json };
 export type JsonComposite = JsonArray | JsonObject;
-export type Json = JsonPrimative | JsonComposite;
+export type Json = JsonPrimitive | JsonComposite;
 
 export type InitParams = {
   bundlePath?: string;
@@ -15,7 +15,8 @@ export type InitParams = {
 };
 
 export type AnySerializable = Json;
-export type VmArgs = { process: string; timeoutMs?: number };
+export type CallOptions = { process: string; timeoutMs?: number };
+export type CastOptions = { process: string };
 
 export interface Popcorn {
   /* Stdout handler, defaults to console.log() */
@@ -29,10 +30,10 @@ export interface Popcorn {
   /* Send a message to Elixir process expecting a result */
   call<T = AnySerializable, U = AnySerializable>(
     args: T,
-    vmArg: VmArgs,
-  ): Promise<{ data: U; durationMs: number; error?: string }>;
+    opts: CallOptions,
+  ): Promise<{ data: U; durationMs: number; error?: AnySerializable }>;
   /* Send a message to Elixir process */
-  cast<T = AnySerializable>(args: T, vmArgs: VmArgs): void;
+  cast<T = AnySerializable>(args: T, opts: CastOptions): void;
 }
 
 declare global {

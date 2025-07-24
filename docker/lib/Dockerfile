@@ -46,6 +46,7 @@ _system_deps:
     automake make gcc g++ libssl-dev libncurses-dev \
     python3 xz-utils \
     gpg wget curl
+    curl https://sh.rustup.rs -sSf | sh -s -- -y
 
     # install mise
     install -dm 755 /etc/apt/keyrings
@@ -83,6 +84,7 @@ example_eval: (_example '/build/lib/eval_in_wasm')
 [group('examples')]
 _example dir: atomvm
     #!/usr/bin/env bash
+    source $HOME/.cargo/env
     cd {{dir}} && \
     mix deps.get && \
     mix popcorn.cook && \

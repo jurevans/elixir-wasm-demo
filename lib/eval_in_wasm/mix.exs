@@ -25,8 +25,7 @@ defmodule EvalInWasm.MixProject do
   defp deps do
     [
       {:popcorn, "~> 0.1.0"},
-      {:playwright,
-       github: "membraneframework-labs/playwright-elixir", runtime: false, only: :test}
+      {:anoma_lib, github: "anoma/anoma", subdir: "apps/anoma_lib", tag: "v0.34.0"},
     ]
   end
 end

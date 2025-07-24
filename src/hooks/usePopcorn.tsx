@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { type Popcorn } from "../types";
+import type { Popcorn } from "../types";
 
 export const usePopcorn = () => {
   const [popcorn, setPopcorn] = useState<Popcorn>();
